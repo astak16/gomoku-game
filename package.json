@@ -1,0 +1,16 @@
+{
+  "name": "gomoku-game",
+  "version": "1.0.0",
+  "description": "A web-based Gomoku (Five in a Row) game",
+  "main": "game.js",
+  "scripts": {
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "gomoku",
+    "game",
+    "five-in-a-row"
+  ],
+  "author": "",
+  "license": "MIT"
+}
