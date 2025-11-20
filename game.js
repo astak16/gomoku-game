@@ -10,14 +10,35 @@ class GomokuGame {
             throw new Error('Could not get 2D context from canvas');
         }
 
-        this.cellSize = canvas.width / this.boardSize;
         this.board = [];
         this.currentPlayer = 'black';
         this.gameOver = false;
 
+        this.resizeCanvas();
         this.initBoard();
         this.drawBoard();
         this.updatePlayerIndicator();
+    }
+
+    resizeCanvas() {
+        // 获取canvas的CSS渲染尺寸
+        const rect = this.canvas.getBoundingClientRect();
+        const size = Math.min(rect.width, 600); // 最大600px
+
+        // 设置canvas的实际像素尺寸，考虑设备像素比以获得清晰显示
+        const dpr = window.devicePixelRatio || 1;
+        this.canvas.width = size * dpr;
+        this.canvas.height = size * dpr;
+
+        // 缩放canvas上下文以匹配设备像素比
+        this.ctx.scale(dpr, dpr);
+
+        // 设置CSS尺寸
+        this.canvas.style.width = size + 'px';
+        this.canvas.style.height = size + 'px';
+
+        // 更新单元格大小
+        this.cellSize = size / this.boardSize;
     }
 
     initBoard() {
@@ -28,8 +49,9 @@ class GomokuGame {
 
     drawBoard() {
         // 绘制背景
+        const size = this.cellSize * this.boardSize;
         this.ctx.fillStyle = '#dcb35c';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillRect(0, 0, size, size);
 
         // 绘制网格线
         this.ctx.strokeStyle = '#000';
@@ -40,7 +62,7 @@ class GomokuGame {
             this.ctx.beginPath();
             this.ctx.moveTo(this.cellSize / 2, i * this.cellSize + this.cellSize / 2);
             this.ctx.lineTo(
-                this.canvas.width - this.cellSize / 2,
+                size - this.cellSize / 2,
                 i * this.cellSize + this.cellSize / 2
             );
             this.ctx.stroke();
@@ -50,7 +72,7 @@ class GomokuGame {
             this.ctx.moveTo(i * this.cellSize + this.cellSize / 2, this.cellSize / 2);
             this.ctx.lineTo(
                 i * this.cellSize + this.cellSize / 2,
-                this.canvas.height - this.cellSize / 2
+                size - this.cellSize / 2
             );
             this.ctx.stroke();
         }
@@ -236,6 +258,13 @@ class GomokuGame {
         this.drawBoard();
         this.updatePlayerIndicator();
     }
+
+    handleResize() {
+        // 重新计算canvas尺寸
+        this.resizeCanvas();
+        // 重新绘制棋盘（保留当前游戏状态）
+        this.drawBoard();
+    }
 }
 
 // 初始化游戏
@@ -256,4 +285,14 @@ resetBtn.addEventListener('click', () => {
 
 canvas.addEventListener('click', (event) => {
     game.handleClick(event);
+});
+
+// 监听窗口大小变化
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    // 使用防抖优化性能
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        game.handleResize();
+    }, 250);
 });
