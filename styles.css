@@ -76,6 +76,10 @@ h1 {
     cursor: pointer;
     background: #dcb35c;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 #game-board:hover {
@@ -105,11 +109,6 @@ h1 {
 
     h1 {
         font-size: 1.8rem;
-    }
-
-    #game-board {
-        width: 100%;
-        height: auto;
     }
 
     .game-info {
